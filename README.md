@@ -6,6 +6,7 @@
 * Support for Modded DLLs & Script Extenders.
   * Needs Symlink Enabled through plugin settings.
 * Support for Overwrite Folder.
+* Auto-Cleanup Mechanisms.
 ## How to Install
 Just Copy and Paste into (Mod Organizer 2)/Plugins
 ## How to Use
