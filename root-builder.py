@@ -106,8 +106,7 @@ class RootBuilder(mobase.IPluginFileMapper):
         return True
 
     def settings(self):
-        return [mobase.PluginSetting("enabled", self.__tr("Enable Plugin"), True),
-            mobase.PluginSetting("Symlink", self.__tr("use Symlink instead of MO2's internal Mounting System(Experimental)?\nAllows DLL Loading"), False)]
+        return [mobase.PluginSetting("enabled", self.__tr("Enable Plugin"), True)]
 
     def __tr(self, str):
         return QCoreApplication.translate("RootBuilder", str)
