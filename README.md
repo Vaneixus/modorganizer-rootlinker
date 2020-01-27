@@ -16,5 +16,5 @@ Just Copy and Paste into (Mod Organizer 2)/Plugins
   4. place all desired content inside that folder
       * Please Note that no Data folder is allowed inside the Root folder. Any Root folder containing a Data folder will be ignored!
   5. Enjoy!
-###### Please note for DLLs and Script Extenders work on new games, you will need the symlink option in the plugin's settings set to TRUE. This does not concern stuff like ENB Presets which are not affected by having this option set to true or false.
+###### Please note for DLLs and Script Extenders to work on new games, you will need the symlink option in the plugin's settings set to TRUE. This does not concern stuff like ENB Presets which are not affected by having this option set to true or false.
 ###### Please note that symlink is not as reliable as the primary loading system and it is recommended to backup the game root folder, in exception of the Data folder, as a precautionary measure in case the internal backup system fails.
