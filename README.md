@@ -1,6 +1,5 @@
 # Root Builder
-## Description
-Have you ever wanted to have control over your game's root folder and switch files like ENBs, Script Extenders and other DLLs on the fly? Well, You have come to the Right place! With Root Builder, you can control the contents of the root game folder through Mod Organizer's Interface!
+ Have you ever wanted to have control over your game's root folder and switch files like ENBs, Script Extenders and other DLLs on the fly? Well, You have come to the Right place! With Root Builder, you can control the contents of the root game folder through Mod Organizer's Interface!
 ## Features
 * Prioritised Loading through Mod Priority.
 * Two Different Systems for loading Root-Level Mods.
