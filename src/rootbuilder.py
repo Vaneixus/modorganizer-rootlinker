@@ -115,6 +115,9 @@ class RootBuilder(mobase.IPluginFileMapper):
     # @return: The updated file structure table.
     ###
     def updateMountStructureTable(self, updatedTable):
+        if not self.helperf_useSymlink():
+            # No need to save it locally, USVFS will handle it.
+            return updatedTable
         with open(str(self.helperf_instancePath()
                      / "mountedfiles.json", 'w')) as mountDataJSONFile:
             json.dump(self.mappedFiles)
