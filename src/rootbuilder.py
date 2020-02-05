@@ -68,10 +68,10 @@ class RootBuilder(mobase.IPluginFileMapper):
             mobase.PluginSetting(
                 "Symlink",
                 self.__tr("use Symlink instead"
-                        + " of MO2's internal mounting system(Beta)?"
+                        + " of MO2's internal mounting system (Beta)?"
                         + "\nRequired for DLLs to work on some games"),
                 False)
-        ]
+               ]
 
     def isActive(self):
         return self.iOrganizer.pluginSetting(self.name(), "Enabled")
