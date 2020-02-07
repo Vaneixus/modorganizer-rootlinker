@@ -62,22 +62,22 @@ class RootBuilder(mobase.IPluginFileMapper):
 
     def settings(self):
         return [mobase.PluginSetting(
-                "Enabled",
-                self.__tr("Enable Plugin"),
-                True),
-            mobase.PluginSetting(
-                "Symlink",
-                self.__tr("use Symlink instead"
-                        + " of MO2's internal mounting system (Beta)?"
-                        + "\nRequired for DLLs to work on some games"),
-                False)
+                    "Enabled",
+                    self.__tr("Enable Plugin"),
+                    True),
+                mobase.PluginSetting(
+                    "Symlink",
+                    self.__tr("use Symlink instead"
+                            + " of MO2's internal mounting system (Beta)?"
+                            + "\nRequired for DLLs to work on some games"),
+                    False)
                ]
 
     def isActive(self):
         return self.iOrganizer.pluginSetting(self.name(), "Enabled")
 
-    def __tr(self, str):
-        return QCoreApplication.translate("RootBuilder", str)
+    def __tr(self, trstr):
+        return QCoreApplication.translate("RootBuilder", trstr)
 
 
 
@@ -94,7 +94,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
     # @Summary: Tells USVFS what to re-route to root game folder & sets up the
     #           custom overwrite folder.
-    # @returns: Mapping Object list.
+    # @returns: Mapping Object list.(List)
     ###
     def mappings(self):
         rootOverwriteMapping = mobase.Mapping()
@@ -102,6 +102,7 @@ class RootBuilder(mobase.IPluginFileMapper):
         rootOverwriteMapping.destination = str(self.helperf_gamePath())
         rootOverwriteMapping.isDirectory = True
         rootOverwriteMapping.createTarget = True
+        self.cleanupRootOverwriteFolder()
         if self.helperf_useSymlink():
             return [rootOverwriteMapping]
         else:
@@ -109,20 +110,36 @@ class RootBuilder(mobase.IPluginFileMapper):
             return self.mappedFiles
 
     ###
-    # @Summary: updates the cached file/folder structure of files to be
-    #           mounted & saves it on the hard-disk.
-    # @Parameter: The updated file structure table.
-    # @return: The updated file structure table.
+    # @Summary: Updates cached relative mapped paths list.
+    # @Parameter: The updated relative mapped paths list.(List)
     ###
     def updateMountStructureTable(self, updatedTable):
         if not self.helperf_useSymlink():
             # No need to save it locally, USVFS will handle it.
-            return updatedTable
+            return
         with open(str(self.helperf_instancePath()
-                     / "mountedfiles.json", 'w')) as mountDataJSONFile:
+                    / "mountedfiles.json"), 'w') as mountDataJSONFile:
             json.dump(self.mappedFiles)
-        return updatedTable
+        return
 
+    ###
+    # @Summary: Cleans up the root overwrite folder from useless files.
+    ###
+    def cleanupRootOverwriteFolder(self):
+        print("RootBuilder: Cleaning up root overwrite folder...")
+        qDebug("RootBuilder: Looking for any \"Device\" or \"MMCSS\" folders "
+                + "to be removed.")
+        for path, sub_dirs, files in os.walk(self.helperf_rootOverwritePath()):
+            for sub_dir in sub_dirs:
+                if sub_dir == "Device" or sub_dir == "MMCSS":
+                    if Path(path + "\\" + sub_dir).exists():
+                        qDebug("RootBuilder: Found a \"Device\" or \"MMCSS\""
+                            + " folder, cleaning up...")
+                        try:
+                            os.rmdir(path + "\\" + sub_dir)
+                        except IOError:
+                            print("Root Builder: File is not accessable!")
+        return
 
 
 
@@ -138,19 +155,19 @@ class RootBuilder(mobase.IPluginFileMapper):
         return self.iOrganizer.pluginSetting(self.name(), "Symlink")
 
     ###
-    # @return: Location of managed game.(Path Object)
+    # @return: Path to the root game directory.(Path Object)
     ###
     def helperf_gamePath(self):
-        return Path(str(self.iOrganizer.managedGame().gameDirectory()))
+        return Path(self.iOrganizer.managedGame().gameDirectory().path())
 
     ###
-    # @return: Location of current instance.(Path Object)
+    # @return: Path to the current instance.(Path Object)
     ###
     def helperf_instancePath(self):
         return Path(self.iOrganizer.basePath())
 
     ###
-    # @return: Location of root-level overwrite folder.(Path Object)
+    # @return: Path to the root-level overwrite directory.(Path Object)
     ###
     def helperf_rootOverwritePath(self):
         return Path(self.iOrganizer.overwritePath()) / "Root"
