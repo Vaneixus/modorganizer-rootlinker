@@ -46,6 +46,7 @@ class RootBuilder(mobase.IPluginFileMapper):
 
     def init(self, organizer):
         self.iOrganizer = organizer
+
         return True
 
     def name(self):
@@ -84,17 +85,10 @@ class RootBuilder(mobase.IPluginFileMapper):
     def __tr(self, trstr):
         return QCoreApplication.translate("RootBuilder", trstr)
 
+    ##################################
+    ## File Mapper Plugin Structure ##
+    ##################################
 
-
-
-
-    #############################
-    ## Custom Plugin Structure ##
-    #############################
-
-    iOrganizer = None
-
-    mappedFiles = []
 
     ###
     # @Summary: Tells USVFS what to re-route to root game folder & sets up the
@@ -118,27 +112,66 @@ class RootBuilder(mobase.IPluginFileMapper):
             self.mappedFiles.append(rootOverwriteMapping)
             return self.mappedFiles
 
+
+
+    #############################
+    ## Custom Plugin Structure ##
+    #############################
+
+
+    iOrganizer = None
+
+    mappedFiles = []
+
+    ###
+    # @return: A list of all (mod)/Root folders.(Strings List)
+    ###
+    def getRootMods(self):
+        modsList = []
+        for modName in self.helperf_getPrioritisedMods():
+            if (self.iOrganizer.modList().state(modName) &
+                    mobase.ModState.active):
+                if (self.helperf_getModsPath() / modName / "Root").exists():
+                    if not (self.helperf_getModsPath() / modName
+                                    / "Root" / "Data").exists():
+                        modsList.append(modName)
+        return modsList
+
     ###
     # @Summary: Mounts the files using either the user's prefered mount method.
     ###
     def mountModRootFolders(self):
-        modsNameList = self.helperf_getRootMods()
+        modsNameList = self.getRootMods()
         if self.helperf_useSymlink():
             self.symlink_link(modsNameList)
         else:
             self.usvfsReroute(modsNameList)
     ###
     # @Summary: Re-route files using USVFS
-    # @Parameter: Active Mods' Name List.(String List)
+    # @Parameter: Active mods' name list.(String List)
     ###
     def usvfsReroute(self, modsNameList):
-        return
+        for modName in modsNameList:
+            rootMapping = mobase.Mapping()
+            rootMapping.source = str(self.helperf_getModsPath() / modName
+                    / "Root")
+            rootMapping.destination = str(self.helperf_getGamePath())
+            rootMapping.isDirectory = True
+            rootMapping.createTarget = False
+            self.mappedFiles.append(rootMapping)
 
     ###
     # @Summary: Link files using Symlink
-    # @Parameter: Active Mods' Name List.(String List)
+    # @Parameter: Active mods' name list.(String List)
     ###
     def symlink_link(self, modsNameList):
+        return
+
+    ###
+    # @Summary: Unlink files from game root directory
+    # @Parameter: Active mods' name list.(String List)
+    ###
+    def symlink_unlink(self, modsNameList):
         return
 
     ###
@@ -157,7 +190,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
     # @Summary: retrieves the saved relative mapped paths list.
     # @returns: The saved relative mapped paths list.(Path Object List)
-    ###
+    ###TODO Not Finished.
     def retrieveMountStructureTable(self, updatedTable):
         with open(str(self.helperf_getInstancePath()
                     / "mountedfiles.json"), 'r') as mountDataJSONFile:
@@ -209,7 +242,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
     # @return: the prioritised Mods.(Strings list)
     ###
-    def helperf_prioritisedMods(self):
+    def helperf_getPrioritisedMods(self):
         if self.helperf_useSymlink():
             return self.iOrganizer.modsSortedByProfilePriority().reverse()
         else:
@@ -232,19 +265,6 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
     def helperf_getModsPath(self):
         return Path(self.iOrganizer.modsPath())
-
-    ###
-    # @return: A list of all (mod)/Root folders.(Strings List)
-    ###
-    def helperf_getRootMods(self):
-        modsList = []
-        for modName in self.helperf_prioritisedMods():
-            if (self.iOrganizer.modList().state(modName) &
-                    mobase.ModState.active):
-                if (self.helperf_getModsPath() / modName / "Root").exists():
-                    modsList.append(modName)
-        return modsList
-
 
     ###
     # @return: Path to the root-level overwrite directory.(Path Object)
