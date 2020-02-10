@@ -47,15 +47,8 @@ class RootBuilder(mobase.IPluginFileMapper):
     def init(self, organizer):
         # Initialise variables
         self.iOrganizer = organizer
-        self.helperf_setUseSymlink()
-        self.helperf_setGamePath()
-        self.helperf_setInstancePath()
-        self.helperf_setModsPath()
-        self.helperf_setRootOverwritePath()
-        self.retrieveMountStructureTable()
-        # Cleanup in case of unexpected program exit.
-        self.symlink_unlink(mappedFiles)
-        onAboutToRun(f(self.mountModRootFolders()))
+        # self.iOrganizer.onAboutToRun(
+        #    lambda appName: self.mountModRootFolders())
         return True
 
     def name(self):
@@ -105,17 +98,13 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
 
     def mappings(self):
-        if self.rootOverwritePath.exists():
-            self.cleanupOverwriteFolder()
-        else:
-            os.mkdir(self.rootOverwritePath)
-        self.mountModRootFolders()
         rootOverwriteMapping = mobase.Mapping()
-        rootOverwriteMapping.source = str(self.rootOverwritePath)
-        rootOverwriteMapping.destination = str(self.gamePath)
+        rootOverwriteMapping.source = str(self.helperf_getRootOverwritePath())
+        rootOverwriteMapping.destination = str(self.helperf_getGamePath())
         rootOverwriteMapping.isDirectory = True
         rootOverwriteMapping.createTarget = True
-        if self.useSymlink:
+        self.mountModRootFolders()
+        if self.helperf_getUseSymlink():
             return [rootOverwriteMapping]
         else:
             self.mappedFiles.append(rootOverwriteMapping)
@@ -129,16 +118,6 @@ class RootBuilder(mobase.IPluginFileMapper):
 
     mappedFiles = []
 
-    useSymlink = None
-
-    gamePath = None
-
-    instancePath = None
-
-    modsPath = None
-
-    rootOverwritePath = None
-
     ###
     # @return: A list of all (mod)/Root folders.(Strings List)
     ###
@@ -147,32 +126,50 @@ class RootBuilder(mobase.IPluginFileMapper):
         for modName in self.helperf_getPrioritisedMods():
             if (self.iOrganizer.modList().state(modName) &
                     mobase.ModState.active):
-                if (self.modsPath / modName / "Root").exists():
-                    if not (self.modsPath / modName
+                if (self.helperf_getModsPath() / modName / "Root").exists():
+                    if not (self.helperf_getModsPath() / modName
                             / "Root" / "Data").exists():
+                        qDebug(
+                            "RootBuilder: /Root detected adding mod to root mapping: " + modName)
                         modsList.append(modName)
+                    else:
+                        qDebug(
+                            "RootBuilder: Root/Data detected, skipping: " + modName)
         return modsList
 
     ###
     # @Summary: Mounts the files using either the user's prefered mount method.
     ###
     def mountModRootFolders(self):
+        # Cleanup root overwrite directory
+        if self.helperf_getRootOverwritePath().exists():
+            self.cleanupOverwriteFolder()
+        else:
+            os.mkdir(self.helperf_getRootOverwritePath())
+        # Cleanup in case of unexpected program exit.
+        qDebug("RootBuilder: About to mount Root mods")
+        self.symlink_unlink(self.mappedFiles)
         modsNameList = self.getRootMods()
-        if self.useSymlink:
+        if self.helperf_getUseSymlink():
             self.symlink_link(modsNameList)
         else:
             self.usvfsReroute(modsNameList)
+        return True
     ###
     # @Summary: Re-route files using USVFS
     # @Parameter: Active mods' name list.(String List)
     ###
 
     def usvfsReroute(self, modsNameList):
+        qDebug("Root Builder: Mounting using USVFS")
         for modName in modsNameList:
+            qDebug("Root Builder: Re-routing (\""
+                   + str(self.helperf_getModsPath() / modName / "Root")
+                   + "\") To (\"" + str(self.helperf_getGamePath()) + "\")")
             rootMapping = mobase.Mapping()
-            rootMapping.source = str(self.modsPath / modName
+            rootMapping.source = str(self.helperf_getModsPath() / modName
                                      / "Root")
-            rootMapping.destination = str(self.gamePath)
+            rootMapping.destination = str(self.helperf_getGamePath())
             rootMapping.isDirectory = True
             rootMapping.createTarget = False
             self.mappedFiles.append(rootMapping)
@@ -190,7 +187,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     # @Parameter: Active mods' name list.(String List)
     ###
     def symlink_link(self, modsNameList):
-
+        qDebug("Root Builder: Mounting using Symlinks")
         return
 
     ###
@@ -198,6 +195,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     # @Parameter: Active mods' name list.(String List)
     ###
     def symlink_unlink(self, modsNameList):
+        qDebug("Root Builder: Un-mounting symlinked files.")
         return
 
     ###
@@ -205,10 +203,10 @@ class RootBuilder(mobase.IPluginFileMapper):
     # @Parameter: The updated relative mapped paths list.(Path Object List)
     ###
     def updateMountStructureTable(self, updatedTable):
-        if not self.useSymlink:
+        if not self.helperf_getUseSymlink():
             # No need to save it locally, USVFS will handle it.
             return
-        with open(str(self.instancePath
+        with open(str(self.helperf_getInstancePath()
                       / "mountedfiles.json"), 'w') as mountDataJSONFile:
             json.dump(self.mappedFiles)
         return
@@ -218,7 +216,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     # @returns: The saved relative mapped paths list.(Path Object List)
     # TODO Not Finished.
     def retrieveMountStructureTable(self):
-        with open(str(self.instancePath
+        with open(str(self.helperf_getInstancePath()
                       / "mountedfiles.json"), 'r') as mountDataJSONFile:
             mappedFiles = json.loads(mountDataJSONFile)
         return
@@ -230,7 +228,7 @@ class RootBuilder(mobase.IPluginFileMapper):
         if not self.iOrganizer.pluginSetting(self.name(), "ow_cleanup"):
             return
         print("RootBuilder: Cleaning up root overwrite folder...")
-        qDebug("RootBuilder: Looking for any \"Device\" or \"MMCSS\" folders "
+        qDebug("Looking for any \"Device\" or \"MMCSS\" folders "
                + "to be removed.")
         for path, sub_dirs, files in os.walk(self.iOrganizer.overwritePath()):
             for sub_dir in sub_dirs:
@@ -243,11 +241,11 @@ class RootBuilder(mobase.IPluginFileMapper):
                         except OSError:
                             print("Root Builder: File is not accessable!")
         # Delete root overwrite folder in case it's empty
-        if not self.rootOverwritePath.exists():
+        if not self.helperf_getRootOverwritePath().exists():
             return
-        if len(os.listdir(self.rootOverwritePath)) == 0:
+        if len(os.listdir(self.helperf_getRootOverwritePath())) == 0:
             print("RootBuilder: cleaning up empty overwrite/Root folder")
-            os.rmdir(rootOverwritePath)
+            os.rmdir(self.helperf_getRootOverwritePath())
         else:
             print("RootBuilder: there are files in overwrite/Root, no cleanup")
         return
@@ -259,8 +257,9 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
     # @return: If Symlink is enabled.(Boolean)
     ###
+    useSymlink = None
 
-    def helperf_setUseSymlink(self):
+    def helperf_getUseSymlink(self):
         self.UseSymlink = self.iOrganizer.pluginSetting(self.name(),
                                                         "load_use_symlink")
 
@@ -276,27 +275,52 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
     # @return: Path to the root game directory.(Path Object)
     ###
-    def helperf_setGamePath(self):
-        self.GamePath = Path(self.iOrganizer.managedGame().gameDirectory()
-                             .path())
+    gamePath = None
+
+    def helperf_getGamePath(self):
+        if not self.gamePath:
+            self.gamePath = Path(
+                self.iOrganizer.managedGame().gameDirectory().path())
+            return self.gamePath
+        else:
+            return self.gamePath
 
     ###
     # @return: Path to the current instance.(Path Object)
     ###
-    def helperf_setInstancePath(self):
-        self.InstancePath = Path(self.iOrganizer.basePath())
+    instancePath = None
+
+    def helperf_getInstancePath(self):
+        if not self.instancePath:
+            self.instancePath = Path(self.iOrganizer.basePath())
+            return self.instancePath
+        else:
+            return self.instancePath
 
     ###
     # @return: Path to the current mods folder.(Path Object)
     ###
-    def helperf_setModsPath(self):
-        self.ModsPath = Path(self.iOrganizer.modsPath())
+    modsPath = None
+
+    def helperf_getModsPath(self):
+        if not self.modsPath:
+            self.modsPath = Path(self.iOrganizer.modsPath())
+            return self.modsPath
+        else:
+            return self.modsPath
 
     ###
     # @return: Path to the root-level overwrite directory.(Path Object)
     ###
-    def helperf_setRootOverwritePath(self):
-        self.RootOverwritePath = Path(self.iOrganizer.overwritePath()) / "Root"
+    rootOverwritePath = None
+
+    def helperf_getRootOverwritePath(self):
+        if not self.rootOverwritePath:
+            self.rootOverwritePath = Path(
+                self.iOrganizer.overwritePath()) / "Root"
+            return self.rootOverwritePath
+        else:
+            return self.rootOverwritePath
 
 
 def createPlugin():
