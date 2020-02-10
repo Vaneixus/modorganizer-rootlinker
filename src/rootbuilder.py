@@ -97,7 +97,7 @@ class RootBuilder(mobase.IPluginFileMapper):
 
     ###
     # @Summary: Called by MO2 when starting programs to get what to re-route.
-    #           Prepares root game folder mod mappings (or uses symlinks 
+    #           Prepares root game folder mod mappings (or uses symlinks
     #           instead) and sets up the overwrite/Root creation target folder.
     # @returns: A Mapping Object list.(Mapping Object list)
     ###
@@ -126,7 +126,6 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
     # @return: A list of all (mod)/Root folders, skipping (mod)/Root/Data cases.
     #         (Strings List)
-    #
     ###
     def getRootMods(self):
         modlist = []
@@ -142,8 +141,8 @@ class RootBuilder(mobase.IPluginFileMapper):
                 if (self.modsPath() / modName / "Root").exists():
                     if not (self.modsPath() / modName
                             / "Root" / "Data").exists():
-                        qDebug("RootBuilder: /Root detected adding mod to "
-                               "root mapping: " + modName)
+                        qDebug("RootBuilder: /Root detected, adding mod to "
+                               + "root mapping: " + modName)
                         rootMods.append(modName)
                     else:
                         qDebug(
@@ -169,11 +168,11 @@ class RootBuilder(mobase.IPluginFileMapper):
         else:
             self.usvfsReroute(modsNameList)
         return True
+
     ###
     # @Summary: Re-route files using USVFS
     # @Parameter: Active mods' name list.(String List)
     ###
-
     def usvfsReroute(self, modsNameList):
         qDebug("Root Builder: Mounting using USVFS")
         for modName in modsNameList:
