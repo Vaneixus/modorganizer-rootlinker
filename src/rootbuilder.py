@@ -96,9 +96,9 @@ class RootBuilder(mobase.IPluginFileMapper):
     ##################################
 
     ###
-    # @Summary: Called by MO2 when starting programs to get what to re-route. 
-    #           Prepares root game folder mod mappings (or uses symlinks instead) and 
-    #           sets up the overwrite/Root creation target folder.
+    # @Summary: Called by MO2 when starting programs to get what to re-route.
+    #           Prepares root game folder mod mappings (or uses symlinks 
+    #           instead) and sets up the overwrite/Root creation target folder.
     # @returns: A Mapping Object list.(Mapping Object list)
     ###
 
@@ -124,7 +124,8 @@ class RootBuilder(mobase.IPluginFileMapper):
     mappedFiles = []
 
     ###
-    # @return: A list of all (mod)/Root folders, skipping (mod)/Root/Data cases. (Strings List)
+    # @return: A list of all (mod)/Root folders, skipping (mod)/Root/Data cases.
+    #         (Strings List)
     #
     ###
     def getRootMods(self):
@@ -141,12 +142,13 @@ class RootBuilder(mobase.IPluginFileMapper):
                 if (self.modsPath() / modName / "Root").exists():
                     if not (self.modsPath() / modName
                             / "Root" / "Data").exists():
-                        qDebug(
-                            "RootBuilder: /Root detected adding mod to root mapping: " + modName)
+                        qDebug("RootBuilder: /Root detected adding mod to "
+                               "root mapping: " + modName)
                         rootMods.append(modName)
                     else:
                         qDebug(
-                            "RootBuilder: Root/Data detected, skipping: " + modName)
+                            "RootBuilder: Root/Data detected, skipping: " +
+                            modName)
         return rootMods
 
     ###
@@ -271,10 +273,10 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
     _useSymlinks = None
 
-    def useSymlinks(self, refresh = False):
+    def useSymlinks(self, refresh=False):
         if self._useSymlinks == None or refresh:
-            self._useSymlinks = self.iOrganizer.pluginSetting(self.name(),
-                                                        "load_use_symlink")
+            self._useSymlinks = self.iOrganizer.pluginSetting(
+                self.name(), "load_use_symlink")
         return self._useSymlinks
 
     ###
@@ -318,7 +320,6 @@ class RootBuilder(mobase.IPluginFileMapper):
             self._rootOverwritePath = Path(
                 self.iOrganizer.overwritePath()) / "Root"
         return self._rootOverwritePath
-
 
 
 def createPlugin():
