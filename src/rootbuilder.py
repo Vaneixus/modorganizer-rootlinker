@@ -67,8 +67,6 @@ class RootBuilder(mobase.IPluginFileMapper):
     def init(self, organizer):
         # Initialise variables
         self.iOrganizer = organizer
-        # self.iOrganizer.onAboutToRun(
-        #    lambda appName: self.mountRootModsDirs())
         return True
 
     def name(self):
@@ -145,9 +143,9 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
     def getRootMods(self):
         modlist = []
-        # get higher priority firt for symlinks version
+        # get higher priority first for symlinks version
         if self.useSymlinks():
-            modlist = self.iOrganizer.modsSortedByProfilePriority().reverse()
+            modlist = reversed(self.iOrganizer.modsSortedByProfilePriority())
         else:
             modlist = self.iOrganizer.modsSortedByProfilePriority()
         rootMods = []
@@ -247,7 +245,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     def retrieveMountStructureTable(self):
         with open(str(self.instancePath()
                       / "mountedfiles.json"), 'r') as mountDataJSONFile:
-            mappedFiles = json.loads(mountDataJSONFile)
+            self.mappedFiles = json.loads(mountDataJSONFile)
         return
 
     ###
