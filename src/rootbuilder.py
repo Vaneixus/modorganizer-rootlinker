@@ -47,13 +47,8 @@
 
 
 from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtWidgets import QMessageBox
-
-from dataclasses import dataclass
 
 from pathlib import Path
-import os
-import json
 
 
 class RootBuilder(mobase.IPluginFileMapper):
@@ -136,7 +131,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     def getRootMods(self):
         modslist = self.iOrganizer.modsSortedByProfilePriority()
         rootMods = []
-        for modName in modlist:
+        for modName in modslist:
             if (self.iOrganizer.modList().state(modName) &
                     mobase.ModState.active):
                 if (self.modsPath() / modName / "Root").exists():
