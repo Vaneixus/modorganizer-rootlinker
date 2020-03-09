@@ -106,8 +106,8 @@ class RootBuilder(mobase.IPluginFileMapper):
 
     ###
     # @Summary: Called by MO2 when starting programs to get what to re-route.
-    #           Prepares root game folder mod mappings (or uses symlinks
-    #           instead) and sets up the overwrite/Root creation target folder.
+    #           Prepares root game folder mod mappings and sets up the
+    #            overwrite/Root creation target folder.
     # @Returns: A Mapping Object list.(Mapping Object list)
     ###
 
@@ -162,7 +162,6 @@ class RootBuilder(mobase.IPluginFileMapper):
             os.mkdir(self.rootOverwritePath())
         # Cleanup in case of unexpected program exit.
         qDebug("RootBuilder: About to mount Root mods")
-        self.symlink_unlink(self.mappedFiles)
         modsNameList = self.getRootMods()
         self.usvfsReroute(modsNameList)
         return True
