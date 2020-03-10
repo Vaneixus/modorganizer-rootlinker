@@ -1,4 +1,4 @@
-## Please note that the Script is not related in any ways to the Mod Organizer Team and is not considered as "Official Plugin" of the Manager, it's a Third Party Plugin and is currently in Active Development
+###### Please note that the Script is not related in any ways to the Mod Organizer Team and is not considered as "Official Plugin" of the Manager, it's a Third Party Plugin and is currently in Active Development
 
 # Description:
 Ever wanted to use different ENB Presets without going through the hassle of cleaning up your game installation of the previous ENB or maybe keep your game installation clean of clutter like Bodyslide files and other useless folders/files and wanted to use MO2's own awesome mods system but soon was disappointed that the system is limited to only the data folder? then found multiple tools for ENBs and such files but they were all standalone? Well you're not alone! I have just got the answer to your needs!
