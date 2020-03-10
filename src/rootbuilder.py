@@ -132,18 +132,22 @@ class RootBuilder(mobase.IPluginFileMapper):
         modslist = self.iOrganizer.modsSortedByProfilePriority()
         rootMods = []
         for modName in modslist:
-            if (self.iOrganizer.modList().state(modName) &
+            if not (self.iOrganizer.modList().state(modName) &
                     mobase.ModState.active):
-                if (self.modsPath() / modName / "Root").exists():
-                    if not (self.modsPath() / modName
-                            / "Root" / "Data").exists():
-                        qDebug("RootBuilder: /Root detected, adding mod to "
-                               + "root mapping: " + modName)
-                        rootMods.append(modName)
-                    else:
-                        qDebug(
-                            "RootBuilder: Root/Data detected, skipping: " +
-                            modName)
+                    continue;
+
+            if not (self.modsPath() / modName / "Root").exists():
+                continue;
+
+            if not (self.modsPath() / modName
+                    / "Root" / "Data").exists():
+                qDebug("RootBuilder: /Root detected, adding mod to "
+                        + "root mapping: " + modName)
+                rootMods.append(modName)
+            else:
+                qDebug(
+                    "RootBuilder: Root/Data detected, skipping: " +
+                    modName)
         return rootMods
 
     ###
@@ -189,14 +193,18 @@ class RootBuilder(mobase.IPluginFileMapper):
                + "to be removed.")
         for path, sub_dirs, files in os.walk(self.iOrganizer.overwritePath()):
             for sub_dir in sub_dirs:
-                if sub_dir == ("Device" or "MMCSS"):
-                    if Path(path, sub_dir).exists():
-                        qDebug("RootBuilder: Found a \"Device\" or \"MMCSS\""
-                               + " folder, cleaning up...")
-                        try:
-                            os.rmdir(path + "\\" + sub_dir)
-                        except OSError:
-                            print("Root Builder: File is not accessable!")
+                if not sub_dir == ("Device" or "MMCSS"):
+                    continue;
+
+                if not Path(path, sub_dir).exists():
+                    continue;
+
+                qDebug("RootBuilder: Found a \"Device\" or \"MMCSS\""
+                        + " folder, cleaning up...")
+                try:
+                    os.rmdir(path + "\\" + sub_dir)
+                except OSError:
+                    print("Root Builder: File is not accessable!")
         # Delete root overwrite folder in case it's empty
         if not self.rootOverwritePath().exists():
             return
