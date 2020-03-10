@@ -1,21 +1,54 @@
-# WORK IN PROGRESS
-# Root Builder
- Have you ever wanted to have control over your game's root folder and switch files like ENBs, Script Extenders and other DLLs on the fly? Well, You have come to the Right place! With Root Builder, you can control the contents of the root game folder through Mod Organizer's Interface!
-## Features
-* Prioritised Loading through Mod Priority.
-* Two Different Systems for loading Root-Level Mods.
-* Support for Modded DLLs & Script Extenders.
-  * Needs Symlink Enabled through plugin settings.
-* Support for Overwrite Folder.
-* Auto-Cleanup Mechanisms.
-## How to Install
-Just Copy and Paste into (Mod Organizer 2)/Plugins
-## How to Use
-  1. Create a new (empty) or use an existing mod.
-  2. Navigate to the new mod's folder.
-  3. Create a folder named "Root"(without quote marks) inside the mod's folder.
-  4. place all desired content inside that folder
-      * Please Note that no Data folder is allowed inside the Root folder. Any Root folder containing a Data folder will be ignored!
-  5. Enjoy!
-###### Please note for DLLs and Script Extenders to work on new games, you will need the symlink option in the plugin's settings set to TRUE. This does not concern stuff like ENB Presets which are not affected by having this option set to true or false.
-###### Please note that symlink is not as reliable as the primary loading system and it is recommended to backup the game root folder, in exception of the Data folder, as a precautionary measure in case the internal backup system fails.
+## Please note that the Script is not related in any ways to the Mod Organizer Team and is not considered as "Official Plugin" of the Manager, it's a Third Party Plugin and is currently in Active Development
+
+# Description:
+Ever wanted to use different ENB Presets without going through the hassle of cleaning up your game installation of the previous ENB or maybe keep your game installation clean of clutter like Bodyslide files and other useless folders/files and wanted to use MO2's own awesome mods system but soon was disappointed that the system is limited to only the data folder? then found multiple tools for ENBs and such files but they were all standalone? Well you're not alone! I have just got the answer to your needs!
+
+
+# Features:
+
+* Support for Multiple Games like Fallout 3, Fallout New Vegas, Fallout 4, Skryim SE, etc(As long as they are supported by MOD Organizer 2)
+* Support for Mounting using MO2's Managed Mods.(so files can be disabled using just a tick!)
+* Prioritized loading using mod's load order.
+* Able to detect changes starting from game/App launch until exit and move them to the instance's Overwrite folder.
+* Auto Cleanup of the Overwrite folder.
+* Basic Support of DLLs(Not to be expected to work with New Games using the Creation Engine or with certain DLLs)
+
+
+# How to Install:
+
+ 1. Download the file MANUALLY
+ 2. open the archive and copy the file named rootbuilder.py
+ 3. Paste into MO2's Plugin folder, usually located at MO2's Installation Directory(Not Instance folder)
+ 4. Enjoy!
+
+
+# How to Use:
+
+ 1. Create or use an existing Managed Mod.
+ 2. Open desired Mod's folder.
+ 3. Create a new folder named "Root"(Without quotation marks)
+ 3. paste any and all desired files and folders into the new folder.
+ 5. You're done!
+P.S: Please note that any "Root" folder containing a data folder will be ignored to avoid problems with MO2.
+
+
+# Planned Features:
+
+ * Support for proper mounting of DLLs(like ENB Binaries & Script Extender)(Not currently to be expected to work)
+ * Native Detection of certain directories outside "Root" folder for automatic mounting to game game directory
+
+
+# Contributions:
+
+Any contributions towards the code will be greatly appreciated. The latest build is available at : Click Here
+
+
+# Credits:
+
+    - AL12rs for a lot of Help understanding MO2's plugin system and general plugin help.
+    - AnyOldName3 for helping writing and improving plugin.
+    - & many others in the MO2's Discord Server, who have helped in both, equally important, big and small ways!
+
+
+# Message from Author:
+I would love to hear what you guys think about this plugin and what could be improved/Added!
