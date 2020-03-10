@@ -147,7 +147,7 @@ class RootBuilder(mobase.IPluginFileMapper):
         return rootMods
 
     ###
-    # @Summary: Mounts the files using either the user's prefered mount method.
+    # @Summary: Mounts the files
     ###
     def mountRootModsDirs(self):
         # Cleanup root overwrite directory
@@ -155,7 +155,6 @@ class RootBuilder(mobase.IPluginFileMapper):
             self.cleanupOverwriteFolder()
         else:
             os.mkdir(self.rootOverwritePath())
-        # Cleanup in case of unexpected program exit.
         qDebug("RootBuilder: About to mount Root mods")
         modsNameList = self.getRootMods()
         self.usvfsReroute(modsNameList)
