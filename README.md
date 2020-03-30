@@ -38,11 +38,6 @@ P.S: Please note that any "Root" folder containing a data folder will be ignored
  * Native Detection of certain directories outside "Root" folder for automatic mounting to game game directory
 
 
-# Contributions:
-
-Any contributions towards the code will be greatly appreciated. The latest build is available at : Click Here
-
-
 # Credits:
 
     - AL12rs for a lot of Help understanding MO2's plugin system and general plugin help.
