@@ -186,18 +186,6 @@ class RootBuilder(mobase.IPluginFileMapper):
         if not self.iOrganizer.pluginSetting(self.name(), "ow_cleanup"):
             return
         print("RootBuilder: Cleaning up root overwrite folder...")
-        qDebug("Looking for any \"Device\" or \"MMCSS\" folders "
-               + "to be removed.")
-        for path, sub_dirs, files in os.walk(self.iOrganizer.overwritePath()):
-            for sub_dir in sub_dirs:
-                if sub_dir == ("Device" or "MMCSS"):
-                    if Path(path, sub_dir).exists():
-                        qDebug("RootBuilder: Found a \"Device\" or \"MMCSS\""
-                               + " folder, cleaning up...")
-                        try:
-                            os.rmdir(path + "\\" + sub_dir)
-                        except OSError:
-                            print("Root Builder: File is not accessable!")
         # Delete root overwrite folder in case it's empty
         if not self.rootOverwritePath().exists():
             return
