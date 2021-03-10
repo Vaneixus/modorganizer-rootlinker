@@ -107,6 +107,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     ###
 
     def mappings(self):
+        self.mappedFiles = []
         rootOverwriteMapping = mobase.Mapping()
         rootOverwriteMapping.source = str(self.rootOverwritePath())
         rootOverwriteMapping.destination = str(self.gamePath())
@@ -129,7 +130,7 @@ class RootBuilder(mobase.IPluginFileMapper):
     #         (Strings List)
     ###
     def getRootMods(self):
-        modslist = self.iOrganizer.modsSortedByProfilePriority()
+        modslist = self.iOrganizer.modList().allModsByProfilePriority()
         rootMods = []
         for modName in modslist:
             if (self.iOrganizer.modList().state(modName) &
@@ -138,12 +139,12 @@ class RootBuilder(mobase.IPluginFileMapper):
                     if not (self.modsPath() / modName
                             / "Root" / "Data").exists():
                         qDebug("RootBuilder: /Root detected, adding mod to "
-                               + "root mapping: " + modName)
+                               + "root mapping: " + modName + ".")
                         rootMods.append(modName)
                     else:
                         qDebug(
                             "RootBuilder: Root/Data detected, skipping: " +
-                            modName)
+                            modName + ".")
         return rootMods
 
     ###
