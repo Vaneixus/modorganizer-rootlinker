@@ -2,7 +2,7 @@
 #                                                                             #
 #                 Copyright(C) 2021 Vaneixus Prime                            #
 #                                                                             #
-# This Program is licensed under the terms and conditions of the MIT License. #
+# This file is licensed under the terms and conditions of the MIT License.    #
 # Please see the accompanying file named LICENSE_MIT for the full license,    #
 # if the file is missing or damaged, lease see <https://mit-license.org/> for #
 # for the full MIT license.                                                   #
