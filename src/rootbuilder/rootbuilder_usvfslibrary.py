@@ -32,34 +32,6 @@ class RootBuilderUSVFSLibrary():
         self.helperf = _helperf.helperf(organizer)
         super(RootBuilderUSVFSLibrary, self).__init__()
 
-    ##################################
-    ## File Mapper Plugin Structure ##
-    ##################################
-
-    ###
-    # @Summary: Called by MO2 when starting programs to get what to re-route.
-    #           Prepares root game folder mod mappings and sets up the
-    #            overwrite/Root creation target folder.
-    # @Returns: A Mapping Object list.(Mapping Object list)
-    ###
-
-    def mappings(self):
-        self.mappedFiles = []
-        rootOverwriteMapping = mobase.Mapping()
-        rootOverwriteMapping.source = str(self.helperf.rootOverwritePath())
-        rootOverwriteMapping.destination = str(self.helperf.gamePath())
-        rootOverwriteMapping.isDirectory = True
-        rootOverwriteMapping.createTarget = True
-        self.mountRootModsDirs()
-        self.mappedFiles.append(rootOverwriteMapping)
-        return self.mappedFiles
-
-    #############################
-    ## Custom Plugin Structure ##
-    #############################
-
-    iOrganizer = None
-
     mappedFiles = []
 
     ###
