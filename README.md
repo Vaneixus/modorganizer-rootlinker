@@ -17,7 +17,7 @@ Ever wanted to use different ENB Presets without going through the hassle of cle
 # How to Install:
 
  1. Download the file MANUALLY
- 2. open the archive and copy the file named rootbuilder.py
+ 2. open the archive and copy the folder named (rootbuilder).
  3. Paste into MO2's Plugin folder, usually located at MO2's Installation Directory(Not Instance folder)
  4. Enjoy!
 

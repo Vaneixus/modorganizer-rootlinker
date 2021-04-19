@@ -19,6 +19,7 @@
 
 
 from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import qDebug, qInfo
 import mobase
 
 from . import rootbuilder_helperfunctions as _helperf

@@ -10,6 +10,7 @@
 ###############################################################################
    
 
+from PyQt5.QtCore import qDebug, qInfo
 import mobase
 from pathlib import Path
 
