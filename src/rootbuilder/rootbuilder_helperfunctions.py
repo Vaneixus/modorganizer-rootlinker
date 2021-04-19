@@ -59,5 +59,6 @@ class helperf():
 
     def rootOverwritePath(self):
         if not self._rootOverwritePath:
-            self._rootOverwritePath = Path(self.iOrganizer.overwritePath()) / "Root"
+            self._rootOverwritePath = Path(self.iOrganizer.overwritePath()
+                ) / "Root"
         return self._rootOverwritePath
