@@ -32,13 +32,11 @@ class RootBuilderUSVFSLibrary():
         self.helperf = _helperf.helperf(organizer)
         super(RootBuilderUSVFSLibrary, self).__init__()
 
-    mappedFiles = []
-
     ###
-    # @Return: list of all (mod)/Root folders, skipping (mod)/Root/Data cases.
+    # @Return: list of all mods containing /Root folders, skipping /Root/Data cases.
     #         (Strings List)
     ###
-    def getRootMods(self):
+    def usvfsGetRootMods(self):
         modslist = self.iOrganizer.modList().allModsByProfilePriority()
         rootMods = []
         for modName in modslist:
@@ -55,48 +53,33 @@ class RootBuilderUSVFSLibrary():
         return rootMods
 
     ###
-    # @Summary: Mounts the files
+    # @Parameter: mods' name list.(String List)
+    # @return: 
     ###
-    def mountRootModsDirs(self):
-        # Cleanup root overwrite directory
-        if self.helperf.rootOverwritePath().exists():
-            self.cleanupOverwriteFolder()
-        else:
-            os.mkdir(self.helperf.rootOverwritePath())
-        modsNameList = self.getRootMods()
-        self.usvfsReroute(modsNameList)
-        return self.mappedFiles
-
-    ###
-    # @Summary: Re-route files using USVFS
-    # @Parameter: Active mods' name list.(String List)
-    ###
-    def usvfsReroute(self, modsNameList):
-        qDebug("Root Builder USVFS Library: Mounting using USVFS")
+    def usvfsGetMappingList(self, modsNameList):
+        rootMappingList = []
         for modName in modsNameList:
             qDebug("Root Builder USVFS Library: Re-routing (%s) To (%s)"
                 % (self.helperf.modsPath() / modName / "Root",
-                 self.helperf.gamePath()))
+                   self.helperf.gamePath()))
             rootMapping = mobase.Mapping()
             rootMapping.source = str(self.helperf.modsPath() / modName
                 / "Root")
             rootMapping.destination = str(self.helperf.gamePath())
             rootMapping.isDirectory = True
             rootMapping.createTarget = False
-            self.mappedFiles.append(rootMapping)
+            rootMappingList.append(rootMapping)
+        return rootMappingList
 
     ###
-    # @Summary: Cleans up the overwrite folder from useless files/folders.
+    # @Summary: Cleans up the root overwrite folder from useless files/folders.
     ###
-    def cleanupOverwriteFolder(self):
-        if not self.iOrganizer.pluginSetting("Root Builder", "ow_cleanup"):
-            return
+    def cleanupRootOverwriteFolder(self):
         qInfo("Root Builder USVFS Library: Cleaning up root overwrite folder...")
-        # Delete root overwrite folder in case it's empty
         if not self.helperf.rootOverwritePath().exists():
             return
         if len(os.listdir(self.helperf.rootOverwritePath())) == 0:
-            qDebug("Root Builder USVFS Library: cleaning up empty overwrite/Root"
+            qInfo("Root Builder USVFS Library: cleaning up empty overwrite/Root"
                 + " folder")
             os.rmdir(self.helperf.rootOverwritePath())
         else:

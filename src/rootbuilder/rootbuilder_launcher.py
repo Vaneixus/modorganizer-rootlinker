@@ -18,9 +18,9 @@
 ###############################################################################
 
 
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtCore import qDebug, qInfo
+from PyQt5.QtCore import QCoreApplication, qDebug, qInfo
 import mobase
+import os
 
 from . import rootbuilder_helperfunctions as _helperf
 from . import rootbuilder_usvfslibrary as _usvfslib
@@ -40,6 +40,8 @@ class RootBuilder(mobase.IPluginFileMapper):
         self.iOrganizer = organizer
         self.helperf = _helperf.helperf(organizer)
         self.usvfslib = _usvfslib.RootBuilderUSVFSLibrary(organizer)
+        self.iOrganizer.onFinishedRun(lambda x = "", y = 0: 
+            self.usvfslib.cleanupRootOverwriteFolder())
         return True
 
     def name(self):
@@ -85,12 +87,20 @@ class RootBuilder(mobase.IPluginFileMapper):
     ######################################
 
     def mappings(self):
-        self.mappedFiles = []
+        qDebug("Root Builder: Mounting using USVFS...")
+
+        # Fixes Bug with the rootOverwriteMapping.
+        if not self.helperf.rootOverwritePath().exists():
+            qInfo("Root Builder: Creating Overwrite folder...")
+            os.mkdir(self.helperf.rootOverwritePath())
+
         rootOverwriteMapping = mobase.Mapping()
         rootOverwriteMapping.source = str(self.helperf.rootOverwritePath())
         rootOverwriteMapping.destination = str(self.helperf.gamePath())
         rootOverwriteMapping.isDirectory = True
         rootOverwriteMapping.createTarget = True
-        self.mappedFiles = self.usvfslib.mountRootModsDirs()
-        self.mappedFiles.append(rootOverwriteMapping)
-        return self.mappedFiles
+         
+        rootModsList = self.usvfslib.usvfsGetRootMods()
+        filesMappingList = self.usvfslib.usvfsGetMappingList(rootModsList)
+        filesMappingList.append(rootOverwriteMapping)
+        return filesMappingList
