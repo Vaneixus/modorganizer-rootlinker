@@ -3,6 +3,10 @@
 #                 Copyright(C) 2021 Vaneixus Prime                            #
 #                                                                             #
 # This file is licensed under the terms and conditions of the MIT License.    #
+# it is distributed in the hope that it will be useful, but WITHOUT ANY       #
+# WARRANTY without even the implied warranty of MERCHANTABILITY or FITNESS    #
+# FOR A PARTICULAR PURPOSE.                                                   #
+#                                                                             #
 # Please see the accompanying file named LICENSE_MIT for the full license,    #
 # if the file is missing or damaged, please see <https://mit-license.org/>    #
 # for the full MIT license.                                                   #
@@ -14,11 +18,11 @@ import mobase
 from pathlib import Path
 
 
-class helperf():
+class HelperFunctions():
 
     def __init__(self, organizer):
         self.iOrganizer = organizer
-        super(helperf, self).__init__()
+        super(HelperFunctions, self).__init__()
     
     ###
     # @Return: Path to the root game directory.(Path Object)
@@ -60,3 +64,13 @@ class helperf():
         if not self._rootOverwritePath:
             self._rootOverwritePath = Path(self.iOrganizer.overwritePath()) / "Root"
         return self._rootOverwritePath
+
+    ###
+    # @Return: Path to the plugin Data directory.(Path Object)
+    ###
+    _pluginDataPath = None
+
+    def rootPluginPath(self):
+        if not self._pluginDataPath:
+            self._pluginDataPath = Path(self.iOrganizer.pluginDataPath()) / "Root Builder"
+        return self._pluginDataPath

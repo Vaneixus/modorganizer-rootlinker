@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-#                  Copyright(C) 2020 Vaneixus Prime                           #
+#                  Copyright(C) 2021 Vaneixus Prime                           #
 #                                                                             #
 #  Root Builder USVFS Library is free software: you can redistribute it       #
 #  and/or modify it under the terms of the GNU Lesser General Public License  #
@@ -29,12 +29,12 @@ class RootBuilderUSVFSLibrary():
 
     def __init__(self, organizer):
         self.iOrganizer = organizer
-        self.helperf = _helperf.helperf(organizer)
+        self.helperf = _helperf.HelperFunctions(organizer)
         super(RootBuilderUSVFSLibrary, self).__init__()
 
     ###
-    # @Return: list of all mods containing /Root folders, skipping /Root/Data cases.
-    #         (Strings List)
+    # @Return rootMods: list of all mods containing /Root folders;
+    #       skipping /Root/Data cases. (Strings List)
     ###
     def usvfsGetRootMods(self):
         modslist = self.iOrganizer.modList().allModsByProfilePriority()
@@ -53,13 +53,13 @@ class RootBuilderUSVFSLibrary():
         return rootMods
 
     ###
-    # @Parameter: mods' name list.(String List)
-    # @return: 
+    # @Parameter mosdsNameList: Active mods' name list. (String List)
+    # @return rootMappingList: Mapping object for mods with /Root. (Mapping List)
     ###
     def usvfsGetMappingList(self, modsNameList):
         rootMappingList = []
         for modName in modsNameList:
-            qDebug("Root Builder USVFS Library: Re-routing (%s) To (%s)"
+            qDebug("Root Builder USVFS Library: Re-routing (%s) to (%s)"
                 % (self.helperf.modsPath() / modName / "Root",
                    self.helperf.gamePath()))
             rootMapping = mobase.Mapping()
@@ -80,12 +80,12 @@ class RootBuilderUSVFSLibrary():
             return
         if len(os.listdir(self.helperf.rootOverwritePath())) == 0:
             qInfo("Root Builder USVFS Library: cleaning up empty overwrite/Root"
-                + " folder")
+                + " folder...")
             os.rmdir(self.helperf.rootOverwritePath())
         else:
             qInfo("Root Builder USVFS Library: there are files in"
-                + " overwrite/Root, no cleanup")
+                + " overwrite/Root, no cleanup.")
             return
         qInfo("Root Builder USVFS Library: Finished cleaning up root overwrite"
-            + " folder")
+            + " folder.")
         return

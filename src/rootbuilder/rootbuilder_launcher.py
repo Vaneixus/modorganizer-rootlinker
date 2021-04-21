@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-#                  Copyright(C) 2020 Vaneixus Prime                           #
+#                  Copyright(C) 2021 Vaneixus Prime                           #
 #                                                                             #
 #  Root Builder is free software: you can redistribute it and/or modify       #
 #  it under the terms of the GNU General Public License as published by       #
@@ -24,7 +24,7 @@ import os
 
 from . import rootbuilder_helperfunctions as _helperf
 from . import rootbuilder_usvfslibrary as _usvfslib
-# from . import rootbuilder_linklibrary as linklib
+from . import rootbuilder_linklibrary as _linklib
 
 class RootBuilder(mobase.IPluginFileMapper):
 
@@ -38,8 +38,9 @@ class RootBuilder(mobase.IPluginFileMapper):
     def init(self, organizer):
         # Initialise variables
         self.iOrganizer = organizer
-        self.helperf = _helperf.helperf(organizer)
+        self.helperf = _helperf.HelperFunctions(organizer)
         self.usvfslib = _usvfslib.RootBuilderUSVFSLibrary(organizer)
+        self.linklib = _linklib.RootBuilderLinkLibrary(organizer)
         self.iOrganizer.onFinishedRun(lambda x = "", y = 0: 
             self.usvfslib.cleanupRootOverwriteFolder())
         return True
@@ -67,8 +68,12 @@ class RootBuilder(mobase.IPluginFileMapper):
             True),
             mobase.PluginSetting(
             "link_extensions",
-            self.__tr("a list of extensions to be linked."),
-            True),
+            self.__tr("A list of extensions of files to be linked. Seperated by commas"),
+            "dll"),
+            mobase.PluginSetting(
+            "link_searchLevel",
+            self.__tr("how deep should the search go."),
+            2),
             mobase.PluginSetting(
             "ow_cleanup",
             self.__tr("Clean up empty/useless folders and files from"
@@ -87,9 +92,9 @@ class RootBuilder(mobase.IPluginFileMapper):
     ######################################
 
     def mappings(self):
-        qDebug("Root Builder: Mounting using USVFS...")
+        qDebug("Root Builder: Rerouting using USVFS...")
 
-        # Fixes Bug with the rootOverwriteMapping.
+        # Fixes Bug with rootOverwriteMapping.
         if not self.helperf.rootOverwritePath().exists():
             qInfo("Root Builder: Creating Overwrite folder...")
             os.mkdir(self.helperf.rootOverwritePath())
@@ -104,3 +109,8 @@ class RootBuilder(mobase.IPluginFileMapper):
         filesMappingList = self.usvfslib.usvfsGetMappingList(rootModsList)
         filesMappingList.append(rootOverwriteMapping)
         return filesMappingList
+
+    ###########################
+    ## Custom Data Structure ##
+    ###########################
+
