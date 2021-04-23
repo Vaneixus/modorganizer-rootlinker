@@ -19,8 +19,8 @@
 
 
 from PyQt5.QtCore import QCoreApplication, qDebug, qInfo
-import mobase
-import os
+from pathlib import Path
+import mobase, os, json
 
 from . import rootbuilder_helperfunctions as _helperf
 from . import rootbuilder_usvfslibrary as _usvfslib
@@ -41,6 +41,10 @@ class RootBuilder(mobase.IPluginFileMapper):
         self.helperf = _helperf.HelperFunctions(organizer)
         self.usvfslib = _usvfslib.RootBuilderUSVFSLibrary(organizer)
         self.linklib = _linklib.RootBuilderLinkLibrary(organizer)
+        self.iOrganizer.onAboutToRun(lambda x = "": 
+            self.linkFiles())
+        self.iOrganizer.onFinishedRun(lambda x = "", y = 0: 
+            self.usvfslib.cleanupRootOverwriteFolder())
         self.iOrganizer.onFinishedRun(lambda x = "", y = 0: 
             self.usvfslib.cleanupRootOverwriteFolder())
         return True
@@ -55,30 +59,30 @@ class RootBuilder(mobase.IPluginFileMapper):
         return self.__tr("Adds support for root-Level game modding.")
 
     def version(self):
-        return mobase.VersionInfo(2, 0, 0, 1, mobase.ReleaseType.prealpha)
+        return mobase.VersionInfo(2, 0, 0, 1, mobase.ReleaseType.alpha)
 
     def settings(self):
-        return [mobase.PluginSetting(
-            "enabled",
-            self.__tr("Enable Plugin"),
-            True),
-            mobase.PluginSetting(
-            "link_enabled",
-            self.__tr("Enable Linking Files"),
-            True),
-            mobase.PluginSetting(
-            "link_extensions",
-            self.__tr("A list of extensions of files to be linked. Seperated by commas"),
-            "dll"),
-            mobase.PluginSetting(
-            "link_searchLevel",
-            self.__tr("how deep should the search go."),
-            2),
-            mobase.PluginSetting(
-            "ow_cleanup",
-            self.__tr("Clean up empty/useless folders and files from"
-                      + " the overwrite folder."),
-            True)
+        return [mobase.PluginSetting("enabled",
+                self.__tr("Enable Plugin"),
+                True),
+            mobase.PluginSetting("link_enabled",
+                self.__tr("Enable Linking Files"),
+                True),
+            mobase.PluginSetting("link_extensions",
+                self.__tr("A list of extensions of files to be linked. Seperated by commas"),
+                "dll"),
+            mobase.PluginSetting("link_cleanupMode",
+                self.__tr("how should Rootbuilder react to files left behind by root overwrite:"
+                    + "\n   1 - Move to Root overwrite"
+                    + "\n   2 - Delete Files"
+                    + "\n   3 - Leave Behind\n"),
+                1),
+            mobase.PluginSetting("link_searchLevel",
+                self.__tr("how deep should the search go."),
+                2),
+            mobase.PluginSetting("ow_cleanup",
+                self.__tr("Clean up empty/useless folders and files from the overwrite folder."),
+                True)
         ]
 
     def isActive(self):
@@ -108,9 +112,41 @@ class RootBuilder(mobase.IPluginFileMapper):
         rootModsList = self.usvfslib.usvfsGetRootMods()
         filesMappingList = self.usvfslib.usvfsGetMappingList(rootModsList)
         filesMappingList.append(rootOverwriteMapping)
-        return filesMappingList
+        return []#filesMappingList
 
     ###########################
     ## Custom Data Structure ##
     ###########################
 
+    def linkFiles(self):
+        if not self.iOrganizer.pluginSetting(self.name(), "link_enabled"):
+            return
+        filesList = []
+
+        allwdExt = self.iOrganizer.pluginSetting(self.name(), "link_extensions")
+        allwdExt = allwdExt.replace(" ", "")
+        allwdExt = allwdExt.replace(".", "")
+        allwdExtList = allwdExt.split(",")
+        searchLevel = self.iOrganizer.pluginSetting(self.name(), "link_searchLevel")
+
+        for mod in self.usvfslib.usvfsGetRootMods():
+            modPath = self.helperf.modsPath() / mod
+            filesList += self.linklib.getAllwedFilesList(modPath, allwdExtList, searchLevel)
+        
+        filesList += self.linklib.getAllwedFilesList(Path(self.iOrganizer.overwritePath()), allwdExtList, searchLevel)
+        filesList.reverse()
+        LinkedFiles = self.linklib.LinkFiles(self.helperf.gamePath(), filesList)
+
+        if not (self.helperf._pluginDataPath / "linkedfiles.json").exists():
+            (self.helperf._pluginDataPath / "linkedfiles.json")
+        with open(self.helperf._pluginDataPath / "linkedfiles.json") as jsonFile:
+            json.dump(LinkedFiles, jsonFile)
+        
+        # Required to not interrupt MO2 Launch flow
+        return True
+
+    def cleanupGameFolder(self):
+        if not (self.helperf._pluginDataPath / "linkedfiles.json").exists():
+            return
+        with open(self.helperf._pluginDataPath / "linkedfiles.json") as linkedFilesRaw:
+            linkedFiles = json.load(linkedFilesRaw)

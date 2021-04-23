@@ -73,4 +73,6 @@ class HelperFunctions():
     def rootPluginPath(self):
         if not self._pluginDataPath:
             self._pluginDataPath = Path(self.iOrganizer.pluginDataPath()) / "Root Builder"
+            if not self._pluginDataPath.exists():
+                self._pluginDataPath.mkdir()
         return self._pluginDataPath

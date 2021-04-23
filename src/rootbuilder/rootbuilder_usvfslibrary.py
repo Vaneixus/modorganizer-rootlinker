@@ -19,11 +19,8 @@
 
 
 from PyQt5.QtCore import qDebug, qInfo, qWarning
-from pathlib import Path
-import os
-
-import mobase
 from . import rootbuilder_helperfunctions as _helperf
+import mobase, os
 
 class RootBuilderUSVFSLibrary():
 
