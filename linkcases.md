@@ -4,5 +4,5 @@
 		|		|<delete plugin data's linked files list file>
 		|
 		|<on about to run>
-		|			|<get any and all files in the root mods with the allowed extensions>
-		|			|<>
+		|		|<get any and all files in the root mods with the allowed extensions>
+		|		|<>
