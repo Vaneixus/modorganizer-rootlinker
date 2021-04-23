@@ -41,12 +41,13 @@ class RootBuilder(mobase.IPluginFileMapper):
         self.helperf = _helperf.HelperFunctions(organizer)
         self.usvfslib = _usvfslib.RootBuilderUSVFSLibrary(organizer)
         self.linklib = _linklib.RootBuilderLinkLibrary(organizer)
+        self.cleanupGameFolder()
         self.iOrganizer.onAboutToRun(lambda x = "": 
             self.linkFiles())
         self.iOrganizer.onFinishedRun(lambda x = "", y = 0: 
             self.usvfslib.cleanupRootOverwriteFolder())
         self.iOrganizer.onFinishedRun(lambda x = "", y = 0: 
-            self.usvfslib.cleanupRootOverwriteFolder())
+            self.cleanupGameFolder())
         return True
 
     def name(self):
@@ -137,16 +138,22 @@ class RootBuilder(mobase.IPluginFileMapper):
         filesList.reverse()
         LinkedFiles = self.linklib.LinkFiles(self.helperf.gamePath(), filesList)
 
-        if not (self.helperf._pluginDataPath / "linkedfiles.json").exists():
-            (self.helperf._pluginDataPath / "linkedfiles.json")
-        with open(self.helperf._pluginDataPath / "linkedfiles.json") as jsonFile:
+        if not (self.helperf.rootPluginDataPath() / "linkedfiles.json").exists():
+            (self.helperf.rootPluginDataPath() / "linkedfiles.json").touch()
+        with open(self.helperf.rootPluginDataPath() / "linkedfiles.json", "w") as jsonFile:
             json.dump(LinkedFiles, jsonFile)
         
         # Required to not interrupt MO2 Launch flow
         return True
 
     def cleanupGameFolder(self):
-        if not (self.helperf._pluginDataPath / "linkedfiles.json").exists():
+        if not (self.helperf.rootPluginDataPath() / "linkedfiles.json").exists():
             return
-        with open(self.helperf._pluginDataPath / "linkedfiles.json") as linkedFilesRaw:
-            linkedFiles = json.load(linkedFilesRaw)
+        linkedFiles = json.load(open(self.helperf.rootPluginDataPath() / "linkedfiles.json"))
+        for file in linkedFiles:
+            file = Path(file)
+            modfile = file
+            modfile.unlink(True)
+            if Path(file.__str__() + "._rootbuilder").exists():
+                Path(file.__str__() + "._rootbuilder").rename(file)
+        (self.helperf.rootPluginDataPath() / "linkedfiles.json").unlink()

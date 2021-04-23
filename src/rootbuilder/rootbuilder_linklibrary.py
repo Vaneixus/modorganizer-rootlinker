@@ -81,8 +81,9 @@ class RootBuilderLinkLibrary():
                     print("File Detected is the same as one in game folder.")
                     continue
                 OldfileGamePath = fileGamePath
-                OldfileBackupPath = OldfileGamePath.parent / (OldfileGamePath.name + ".rootbuilder")
+                OldfileBackupPath = OldfileGamePath.parent / (OldfileGamePath.name + "._rootbuilder")
                 OldfileGamePath.rename(OldfileBackupPath)
             file.link_to(fileGamePath)
             qDebug("Root Builder Link Library: Hardlink created for (%s) at (%s)." % (file, fileGamePath))
+            linkedFilesList.append(str(fileGamePath))
         return linkedFilesList
