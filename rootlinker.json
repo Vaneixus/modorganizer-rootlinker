@@ -2,8 +2,8 @@
  "Name": "Root Linker",
  "Author": "VaneixusPrime",
  "Description": "Ever wanted to switch between ENBs easily with one click without having to go through the hassle of deleting the old one? Ever wanted to keep your game folder clean from pesky DLLs & other files while using Mod Organizer? Well Root Linker(formerly Root Builder) is just for you! Just create a Root folder in a mod with all the files and you're set!",
- "DocsUrl": "https://github.com/Vaneixus/modorganizer-rootbuilder/blob/master/README.md",
- "GithubUrl": "https://github.com/Vaneixus/modorganizer-rootbuilder",
+ "DocsUrl": "https://github.com/Vaneixus/modorganizer-rootlinker/blob/master/README.md",
+ "GithubUrl": "https://github.com/Vaneixus/modorganizer-rootlinker",
  "NexusUrl": "https://www.nexusmods.com/fallout4/mods/43814",
  "Versions": [
   {
@@ -13,7 +13,7 @@
    "MaxSupport": "",
    "MinWorking": "2.4.2",
    "MaxWorking": "",
-   "DownloadUrl": "https://github.com/Vaneixus/modorganizer-rootbuilder/releases/download/v0.0.3/Root.Linker-43814-0-0-3-1638115046.zip",
+   "DownloadUrl": "https://github.com/Vaneixus/modorganizer-rootlinker/releases/download/v0.0.3/Root.Linker-43814-0-0-3-1638115046.zip",
    "PluginPath": [
     "rootlinker.py"
    ],
@@ -30,7 +30,7 @@
    "MaxSupport": "",
    "MinWorking": "2.4.2",
    "MaxWorking": "",
-   "DownloadUrl": "https://github.com/Vaneixus/modorganizer-rootbuilder/releases/download/v0.0.2/Root.Builder-43814-0-0-2-1615344562.zip",
+   "DownloadUrl": "https://github.com/Vaneixus/modorganizer-rootlinker/releases/download/v0.0.2/Root.Builder-43814-0-0-2-1615344562.zip",
    "PluginPath": [
     "rootbuilder.py"
    ],
@@ -47,7 +47,7 @@
    "MaxSupport": "2.3.2",
    "MinWorking": "",
    "MaxWorking": "2.4.0",
-   "DownloadUrl": "https://github.com/Vaneixus/modorganizer-rootbuilder/releases/download/v0.0.2/Root.Builder-43814-0-0-2-Legacy-1615345009.zip",
+   "DownloadUrl": "https://github.com/Vaneixus/modorganizer-rootlinker/releases/download/v0.0.2/Root.Builder-43814-0-0-2-Legacy-1615345009.zip",
    "PluginPath": [
     "rootbuilder.py"
    ],
@@ -64,7 +64,7 @@
    "MaxSupport": "2.3.2",
    "MinWorking": "",
    "MaxWorking": "",
-   "DownloadUrl": "https://github.com/Vaneixus/modorganizer-rootbuilder/releases/download/v0.0.1/Root.Builder-43814-0-0-1-Fixed-1583719176.1.zip",
+   "DownloadUrl": "https://github.com/Vaneixus/modorganizer-rootlinker/releases/download/v0.0.1/Root.Builder-43814-0-0-1-Fixed-1583719176.1.zip",
    "PluginPath": [
     "rootbuilder.py"
    ],
